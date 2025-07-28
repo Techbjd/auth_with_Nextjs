@@ -34,7 +34,8 @@ const tokenData ={
     email: user.email
 }
 //create token
-const token = jwt.sign(tokenData, process.env.TOKEN_SECRETE!, { expiresIn: "1d" });
+const  token = jwt.sign(tokenData, process.env.TOKEN_SECRET!, { expiresIn: "1d" });
+
 
 const response =NextResponse.json({
     message:"login successful",
@@ -42,6 +43,9 @@ const response =NextResponse.json({
 })
 response.cookies.set("token",token,{
     httpOnly:true,
+     sameSite: "lax",
+  path: "/",
+  maxAge: 60 * 60 * 24, 
 })
 return response;
 

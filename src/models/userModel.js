@@ -34,7 +34,7 @@ verifyTokenExpiry:Date,
 
 })
 
-const User =mongoose.model.User||mongoose.model("users",userSchema);
+const User = mongoose.models.users || mongoose.model("users", userSchema);
 
 
 export default User;
