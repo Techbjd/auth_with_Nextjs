@@ -44,7 +44,7 @@ export default function VerifyEmail() {
   };
 
   useEffect(() => {
-    // Better token extraction from URL
+   
     const urlParams = new URLSearchParams(window.location.search);
     const urlToken = urlParams.get('token');
     
@@ -71,12 +71,12 @@ export default function VerifyEmail() {
           <hr className="mb-4" />
         </div>
 
-        {/* Token Display (for debugging - remove in production) */}
+      
         <div className="p-3 bg-gray-100 text-black rounded text-sm break-all">
           <strong>Token:</strong> {token ? token : "No token"}
         </div>
 
-        {/* Loading State */}
+
         {loading && (
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
@@ -84,7 +84,7 @@ export default function VerifyEmail() {
           </div>
         )}
 
-        {/* Success State */}
+
         {verified && !loading && (
           <div className="text-center space-y-4">
             <div className="p-4 bg-green-100 border border-green-400 text-green-700 rounded">
@@ -100,7 +100,6 @@ export default function VerifyEmail() {
           </div>
         )}
 
-        {/* Error State */}
         {error && !loading && !verified && (
           <div className="text-center space-y-4">
             <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded">
