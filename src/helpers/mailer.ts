@@ -12,7 +12,10 @@ export const sendEmail=async({email,emailType,userId}:any)=>{
 
 try {
     
-const hashedToken=bcryptjs.hash(userId.toString(),10)
+const hashedToken= await bcryptjs.hash(userId.toString(),10)
+console.log("Hashed Token: ", typeof hashedToken);
+console.log(hashedToken)
+
 if(emailType === 'VERIFY') {
     
    await User.findByIdAndUpdate(userId,
@@ -38,7 +41,7 @@ const transport=nodemailer.createTransport({
     pass: process.env.MAILTRAPP
   }
 });
-const mailOptions = {
+const mailOptions = { 
     from:"bijaydhakl115@gmail.com",to :email,
     subject:emailType==="VERIFY" ? "Verify your email" : "Reset your password",
     html:`<p>Click <a href="${process.env.domain}/verifytoken/${hashedToken}">here</a> to ${emailType === 'VERIFY' ? 'verify your email' : 'reset your password'} or copy paste the link bellow in your browser . <br> ${process.env.domain}/verifyemail?token=${hashedToken}</p>`
