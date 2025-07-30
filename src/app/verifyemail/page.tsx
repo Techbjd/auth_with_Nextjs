@@ -11,6 +11,7 @@ export default function VerifyEmail() {
   const [errorMessage, setErrorMessage] = useState("");
 
   const VerifyUserEmail = async () => {
+
     if (!token || token === "No token provided") {
       setError(true);
       setErrorMessage("No valid token provided");
@@ -22,10 +23,10 @@ export default function VerifyEmail() {
       setError(false);
       
       
-      const decodedToken = decodeURIComponent(token);
+    
       
       const response = await axios.post("/api/users/verifyemail", { 
-        token: decodedToken 
+        token: token 
       });
       
       if (response.data.success) {
@@ -48,6 +49,10 @@ export default function VerifyEmail() {
     const urlParams = new URLSearchParams(window.location.search);
     const urlToken = urlParams.get('token');
     
+    console.log("Raw URL token:", urlToken);
+
+
+
     if (urlToken) {
       setToken(urlToken);
     } else {
@@ -67,13 +72,14 @@ export default function VerifyEmail() {
     <div className="flex flex-col items-center justify-center min-h-screen py-2 px-4">
       <div className="max-w-md w-full space-y-6">
         <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">Verify Email</h1>
+            <h1 className="text-4xl font-bold mb-4">Verify Your Email</h1>
           <hr className="mb-4" />
         </div>
 
       
         <div className="p-3 bg-gray-100 text-black rounded text-sm break-all">
           <strong>Token:</strong> {token ? token : "No token"}
+          
         </div>
 
 

@@ -11,6 +11,7 @@ try {
     }
    const decodedToken: any = jwt.verify(token,process.env.TOKEN_SECRET!) 
    return decodedToken.id;
+
 } catch (error:any) {
     throw new Error("Failed to get data from token");
 }

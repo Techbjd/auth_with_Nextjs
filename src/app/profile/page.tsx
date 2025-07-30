@@ -19,7 +19,8 @@ try {
   console.log("Logout successful");
     router.push('/login')
 
-} catch (error: any) {
+} 
+catch (error: any) {
   console.error("Logout failed:", error)
   toast.error("Logout failed: " + error.message);
   
@@ -66,6 +67,8 @@ const getUserDetails= async()=>{
 <hr />
 
 <Link href="/signup">Go to Signup Page</Link>
+ <Link href="/Updatepassword">Change password</Link>
+ 
    </div>
 
   );
