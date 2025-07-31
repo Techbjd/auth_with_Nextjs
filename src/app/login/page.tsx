@@ -51,10 +51,8 @@ export default function LoginPage() {
 
     try {
       setLoading(true);
-      router.push(`/updatepassword`);
-    
-      // const response = await axios.post("/api/users/forgot-password", { email: user.email });
-      // toast.success("Password reset email sent!");
+      router.push(`/resetpassword`);
+       toast.success("Password reset email sent!");
     } catch (error: any) {
       console.log("Forgot password error:", error.response?.data || error.message);
       toast.error(error.response?.data?.error || "Failed to process request");

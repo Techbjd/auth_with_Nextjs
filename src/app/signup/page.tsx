@@ -21,7 +21,6 @@ setLoading(true)
 const response = await axios.post("/api/users/signup", user);
 console.log("Signup response(successful):", response.data);
 toast.success("Signup successful!");
-// Redirect to profile page after successful signup
 router.push("/profile")
  }
 catch (error: any)

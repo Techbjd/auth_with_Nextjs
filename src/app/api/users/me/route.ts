@@ -3,8 +3,6 @@ import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";  
 import connect from "@/dbConfig/dbConfig";
 import User from "@/models/userModel";
-
-// ✅ Make sure to await connection inside the route (safer for hot reload)
 export async function GET(request: NextRequest) {
   try {
     await connect();

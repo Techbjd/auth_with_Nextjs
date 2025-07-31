@@ -1,59 +1,75 @@
-//domain.com/verifytoken/assasadffgdfdffg
-
-
-
 import nodemailer from 'nodemailer';
 import User from '@/models/userModel';
 import bcryptjs from 'bcryptjs';
+import toast from 'react-hot-toast';
 
+export const sendEmail = async({email, emailType, userId}: any) => {
+  try {
+    const hashedToken = await bcryptjs.hash(userId.toString(), 10);
+    console.log("Hashed Token: ", typeof hashedToken);
+    console.log(hashedToken);
 
-
-export const sendEmail=async({email,emailType,userId}:any)=>{
-
-try {
-    
-const hashedToken= await bcryptjs.hash(userId.toString(),10)
-console.log("Hashed Token: ", typeof hashedToken);
-console.log(hashedToken)
-
-if(emailType === 'VERIFY') {
-    
-   await User.findByIdAndUpdate(userId,
-    {verifyToken:hashedToken,
-    verifyTokenExpiry:Date.now() + 3600000 })
-    //1 hour
+    if(emailType === 'VERIFY') {
+      await User.findByIdAndUpdate(userId, {
+        verifyToken: hashedToken,
+        verifyTokenExpiry: Date.now() + 3600000 // 1 hour
+      });
     }
-    else if(emailType === 'RESET') {
-    await User.findByIdAndUpdate(userId, {
+    else if(emailType === 'RESET' || emailType === 'RESET_PASSWORD') {
+      await User.findByIdAndUpdate(userId, {
         forgotPasswordToken: hashedToken,
-        forgotPasswordExpiry: Date.now() + 3600000 // 1 hour                       
-    })
+        forgotPasswordTokenExpiry: Date.now() + 3600000 // 1 hour (fixed field name)
+      });
     }
-   
-const transport=nodemailer.createTransport({
 
-// Looking to send emails in production? Check out our Email API/SMTP product!
+    const transport = nodemailer.createTransport({
+      host: "sandbox.smtp.mailtrap.io",
+      port: 2525,
+      auth: {
+        user: process.env.MAILTRAPU,
+        pass: process.env.MAILTRAPP
+      }
+    });
+    let subject, htmlContent;
+    
+    if(emailType === 'VERIFY') {
+      subject = "Verify your email";
+      htmlContent = `
+        <h2>Email Verification</h2>
+        <p>Click <a href="${process.env.DOMAIN}/verifytoken/${hashedToken}">here</a> to verify your email</p>
+        <p>Or copy and paste this link in your browser:</p>
+        <p>${process.env.DOMAIN}/verifyemail?token=${hashedToken}</p>
+        <p>This link will expire in 1 hour.</p>
+      `;
+    }
+     else if(emailType === 'RESET' || emailType === 'RESET_PASSWORD') {
+      subject = "Reset your password";
+      htmlContent = `
+        <h2>Password Reset Request</h2>
+        <p>You requested to reset your password. Click the link below to reset it:</p>
+        <p><a href="${process.env.DOMAIN}/resetpassword?token=${hashedToken}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset Password</a></p>
+        <p>Or copy and paste this link in your browser:</p>
+        <p>${process.env.DOMAIN}/resetpassword?token=${hashedToken}</p>
+        <p>This link will expire in 1 hour.</p>
+        <p>If you didn't request this password reset, please ignore this email.</p>
+      `;
+    }
 
-  host: "sandbox.smtp.mailtrap.io",
-  port: 2525,
-  auth: {
-    user: process.env.MAILTRAPU,
-    pass: process.env.MAILTRAPP
-  }
-});
-const mailOptions = { 
-    from:"bijaydhakl115@gmail.com",to :email,
-    subject:emailType==="VERIFY" ? "Verify your email" : "Reset your password",
-    html:`<p>Click <a href="${process.env.domain}/verifytoken/${hashedToken}">here</a> to ${emailType === 'VERIFY' ? 'verify your email' : 'reset your password'} or copy paste the link bellow in your browser . <br> ${process.env.domain}/verifyemail?token=${hashedToken}</p>`
-}
+    const mailOptions = {
+      from: "bijay115@gmail.com",
+      to: email,
+      subject: subject,
+      html: htmlContent
+    };
 
-const mailresponse= await transport.sendMail(mailOptions);
-console.log("Email sent successfully");
-return mailresponse;
+    const mailresponse = await transport.sendMail(mailOptions);
+    console.log("Email sent successfully");
+    toast.success("Email sent successfully!");
+    return mailresponse;
 
-} catch (error:any) {
+  } catch (error: any) {
     console.log(error.message);
     throw new Error(error.message);
-    
+  }
 }
-}
+

@@ -67,7 +67,7 @@ const getUserDetails= async()=>{
 <hr />
 
 <Link href="/signup">Go to Signup Page</Link>
- <Link href="/Updatepassword">Change password</Link>
+ <Link href="/updatepassword">Change password</Link>
  
    </div>
 

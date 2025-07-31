@@ -1,4 +1,3 @@
-//it is not tsx 
 
 import connect from "@/dbConfig/dbConfig";
 import User from "@/models/userModel";
@@ -17,8 +16,6 @@ export async function POST(request:NextRequest) {
         const {email,username,password}=reqBody;
 
 console.log(reqBody)
-
-//check if already exists
 const user=await User.findOne({email})
 if(user){
     return NextResponse.json({
@@ -26,7 +23,6 @@ if(user){
     },
 {status:400})
 }
-//has the password
 const salt= await bcrypt.genSalt(10);
 const hashedPassword = await bcrypt.hash(password,salt)
 
@@ -36,7 +32,6 @@ username ,email,password:hashedPassword
 
 const savedUser =await newUser.save()
 console.log(savedUser);
-// send verification email
 await sendEmail({email,emailType:"VERIFY",
     userId:savedUser._id})
 

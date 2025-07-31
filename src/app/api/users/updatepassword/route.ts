@@ -5,6 +5,8 @@ import connect from "@/dbConfig/dbConfig";
 import { getDataFromToken } from "@/helpers/getDataFromToken";
 import { sendEmail } from "@/helpers/mailer";
 
+
+
 await connect();
 
 export async function POST(req: NextRequest) {
@@ -42,15 +44,12 @@ console.log(newpassword)
   
     const salt = await bcryptjs.genSalt(10);
     const hashedPassword = await bcryptjs.hash(newpassword, salt);
-
-    // Update the existing user's password 
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       { password: hashedPassword },
       { new: true }
     );
 console.log(updatedUser)
-    // Send notification email about password change
     await sendEmail({
       email: user.email,
       emailType: "PASSWORD_CHANGE",

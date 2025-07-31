@@ -17,8 +17,6 @@ export default function UpdatePasswordPage() {
   });
   
   const router = useRouter();
-
-  // Password validation
   const validatePassword = (password: string) => {
     const minLength = password.length >= 6;
     const hasUpperCase = /[A-Z]/.test(password);
@@ -56,24 +54,19 @@ export default function UpdatePasswordPage() {
 
     try {
       setLoading(true);
-      
-      // Fixed: Match the API field names (oldpassword, newpassword)
       const res = await axios.post("/api/users/updatepassword", {
         oldpassword: oldPassword,
         newpassword: newPassword,
       });
       
       toast.success(res.data.message);
-      
-      // Clear form
       setOldPassword("");
       setNewPassword("");
       setConfirmNewPassword("");
-      
-      // Redirect after a short delay
+      console.log("updated password sucess")
       setTimeout(() => {
         router.push("/profile");
-      }, 1500);
+      }, 3000);
       
     } catch (error: any) {
       console.error("Password update error:", error);
