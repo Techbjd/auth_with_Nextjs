@@ -36,10 +36,16 @@ export async function POST(request: NextRequest) {
       success: true
     });
     
-  } catch (error: any) {
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Email verification error:", error.message);
+    } else {
+      console.error("Unknown error in email verification:", error);
+    }
     console.error("Email verification error:", error);
     return NextResponse.json({
-      error: error.message  
+      error: "Unknown error in email verification"
+ 
     }, { status: 500 });
   }
 }

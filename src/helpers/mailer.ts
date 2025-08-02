@@ -31,29 +31,30 @@ export const sendEmail = async({email, emailType, userId}: any) => {
       }
     });
     let subject, htmlContent;
-    
-    if(emailType === 'VERIFY') {
-      subject = "Verify your email";
-      htmlContent = `
-        <h2>Email Verification</h2>
-        <p>Click <a href="${process.env.DOMAIN}/verifytoken/${hashedToken}">here</a> to verify your email</p>
-        <p>Or copy and paste this link in your browser:</p>
-        <p>${process.env.DOMAIN}/verifyemail?token=${hashedToken}</p>
-        <p>This link will expire in 1 hour.</p>
-      `;
+
+    if (emailType === "VERIFY") {
+        subject = "Verify your email";
+        htmlContent = `
+            <h2>Verify your email address</h2>
+            <p>Click <a href="${process.env.DOMAIN}/verifyemail?token=${userId}">here</a> to verify your email.</p>
+        `;
+    } else if (emailType === "RESET" || emailType === "RESET_PASSWORD") {
+        subject = "Reset your password";
+        htmlContent = `
+            <h2>Reset your password</h2>
+            <p>Click <a href="${process.env.DOMAIN}/resetpassword?token=${userId}">here</a> to reset your password.</p>
+        `;
+    } else if (emailType === "PASSWORD_CHANGE") {
+        subject = "Your password was changed";
+        htmlContent = `
+            <h2>Password Changed</h2>
+            <p>Your password was successfully changed. If you did not perform this action, please contact support immediately.</p>
+        `;
+    } else {
+        subject = "Notification";
+        htmlContent = `<p>This is a notification from our system.</p>`;
     }
-     else if(emailType === 'RESET' || emailType === 'RESET_PASSWORD') {
-      subject = "Reset your password";
-      htmlContent = `
-        <h2>Password Reset Request</h2>
-        <p>You requested to reset your password. Click the link below to reset it:</p>
-        <p><a href="${process.env.DOMAIN}/resetpassword?token=${hashedToken}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset Password</a></p>
-        <p>Or copy and paste this link in your browser:</p>
-        <p>${process.env.DOMAIN}/resetpassword?token=${hashedToken}</p>
-        <p>This link will expire in 1 hour.</p>
-        <p>If you didn't request this password reset, please ignore this email.</p>
-      `;
-    }
+  
 
     const mailOptions = {
       from: "bijay115@gmail.com",

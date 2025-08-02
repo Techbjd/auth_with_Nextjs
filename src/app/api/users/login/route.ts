@@ -47,9 +47,16 @@ return response;
 
 }
 
-catch (error: any) {
+catch (error: unknown) {
+     console.error("An unknown error occurred in the login API:");
+
+  if (error instanceof Error) {
+    console.error(error.message);
+  } else {
+    console.error("Unknown error", error);
+  }
     return NextResponse.json({
-        error: error.message
+        error: error instanceof Error ? error.message : "An unknown error occurred"
     }, { status: 500 });
     
 }

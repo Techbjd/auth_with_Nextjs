@@ -7,14 +7,13 @@ import { sendEmail } from "@/helpers/mailer";
 
 
 
-await connect();
-
 export async function POST(req: NextRequest) {
+ await connect();
   try {
     const { oldpassword, newpassword } = await req.json();
-console.log(oldpassword)
-console.log(newpassword)    
-   
+    console.log(oldpassword);
+    console.log(newpassword);
+
     if (!oldpassword || !newpassword) {
       return NextResponse.json(
         { message: "Missing old or new password" },
@@ -25,14 +24,14 @@ console.log(newpassword)
     const userId = await getDataFromToken(req);
 
     const user = await User.findById(userId);
-    
+
     if (!user) {
-      return NextResponse.json({
-        error: "Invalid or expired token"
-      }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid or expired token" },
+        { status: 400 }
+      );
     }
 
-    
     const isMatch = await bcryptjs.compare(oldpassword, user.password);
     if (!isMatch) {
       return NextResponse.json(
@@ -41,7 +40,6 @@ console.log(newpassword)
       );
     }
 
-  
     const salt = await bcryptjs.genSalt(10);
     const hashedPassword = await bcryptjs.hash(newpassword, salt);
     const updatedUser = await User.findByIdAndUpdate(
@@ -49,7 +47,16 @@ console.log(newpassword)
       { password: hashedPassword },
       { new: true }
     );
-console.log(updatedUser)
+
+    // Add a null check for updatedUser
+    if (!updatedUser) {
+      return NextResponse.json(
+        { error: "Failed to update user password" },
+        { status: 500 }
+      );
+    }
+
+    // Make sure your mailer handles "PASSWORD_CHANGE" type
     await sendEmail({
       email: user.email,
       emailType: "PASSWORD_CHANGE",
@@ -66,9 +73,16 @@ console.log(updatedUser)
       }
     });
 
-  } catch (error: any) {
-    return NextResponse.json({
-      error: error.message
-    }, { status: 500 });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error in update password API:", error.message);
+    } else {
+      console.error("Unknown error in update password API", error);
+    }
+    
+    return NextResponse.json(
+      { error: "updatepassword api error" },
+      { status: 500 }
+    );
   }
 }

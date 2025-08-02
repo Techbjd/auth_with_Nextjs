@@ -45,9 +45,16 @@ return NextResponse.json({
 
 
 
-    } catch (error: any) {
+    } catch (error: unknown ) {
+if (error instanceof Error) {
+    console.error("Error in signup API:", error.message);
+} else {
+    console.error("Unknown error in signup API", error);
+}
+
+
         return NextResponse.json({
-            error:error.message},
+            error:"Internal server error in signup API"},
             {status:500})
 
 

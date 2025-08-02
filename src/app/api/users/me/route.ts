@@ -20,8 +20,14 @@ export async function GET(request: NextRequest) {
       data: user,
     });
 
-  } catch (error: any) {
-    console.error("/api/users/me error:", error.message);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error in /api/users/me:", error.message);
+    } else {
+      console.error("Unknown error in /api/users/me", error);
+    }
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+    console.error("/api/users/me error:", errorMessage);
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

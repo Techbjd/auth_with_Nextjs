@@ -13,8 +13,18 @@ export async function GET() {
 response.cookies.set("token", "", {httpOnly: true, expires: new Date(0), });
 return response;
 
-    } catch (error:any) {
-        return NextResponse.json({ error: error.message},{status:500})
+    } catch (error:unknown) {
+         console.error("Error in forgot logout API:");
+
+  if (error instanceof Error) {
+    console.error(error.message);
+  } else {
+    console.error("Unknown error", error);
+  }
+        return NextResponse.json(
+            { error: error instanceof Error ? error.message : "Unknown error" },
+            { status: 500 }
+        )
     }
 
 

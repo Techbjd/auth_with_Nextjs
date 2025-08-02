@@ -45,8 +45,15 @@ export async function POST(request: NextRequest) {
       success: true
     });
 
-  } catch (error: any) {
-    console.error("Error in reset password API:", error.message);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error in reset password API:", error.message);
+    }
+    else {
+      console.error("Unknown error in reset password API", error);
+    }
+  const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+    console.error("Error in reset password API:", errorMessage);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

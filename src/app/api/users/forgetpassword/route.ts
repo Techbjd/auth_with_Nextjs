@@ -33,8 +33,14 @@ export async function POST(request: NextRequest) {
       success: true
     });
 
-  } catch (error: any) {
-    console.error("Error in forgot password API:", error.message);
+  } catch (error: unknown) {
+     console.error("Error in forgot password API:");
+
+  if (error instanceof Error) {
+    console.error(error.message);
+  } else {
+    console.error("Unknown error", error);
+  }
     return NextResponse.json(
       { error: "Internal server error" }, 
       { status: 500 }
